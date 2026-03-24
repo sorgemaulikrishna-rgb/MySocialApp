@@ -1,9 +1,10 @@
-export default {
-  expo: {
-    name: "MyInsta",
-    slug: "myinsta",
-    android: {
-      package: "com.myinsta.app"
+{
+  "expo": {
+    "name": "MyInsta",
+    "slug": "myinsta",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.mauli.myinsta"
     }
   }
-};
+}
