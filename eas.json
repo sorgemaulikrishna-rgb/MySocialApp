@@ -9,6 +9,11 @@
       "android": {
         "buildType": "apk"
       }
+    },
+    "Production": {
+      "android": {
+        "buildType": "apk"
+      }
     }
   }
 }
