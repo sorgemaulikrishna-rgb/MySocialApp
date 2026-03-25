@@ -1,0 +1,65 @@
+// HIGHLIGHTS SYSTEM (INSTAGRAM-LIKE STORIES COLLECTION)
+
+const Highlight = mongoose.model("Highlight", {
+  userId: String,       // Owner of the highlight
+  title: String,        // Highlight title
+  coverImage: String,   // Cover image for highlight
+  stories: [String],    // Array of story IDs
+  createdAt: { type: Date, default: Date.now }
+});
+
+// CREATE HIGHLIGHT
+app.post("/highlights/create", async (req, res) => {
+  const { userId, title, coverImage, stories } = req.body;
+
+  const highlight = new Highlight({
+    userId,
+    title,
+    coverImage,
+    stories
+  });
+
+  await highlight.save();
+
+  res.json({ message: "Highlight created", highlight });
+});
+
+// GET HIGHLIGHTS OF USER
+app.get("/highlights/:userId", async (req, res) => {
+  const highlights = await Highlight.find({ userId: req.params.userId })
+    .sort({ createdAt: -1 });
+
+  res.json({ total: highlights.length, highlights });
+});
+
+// ADD STORY TO HIGHLIGHT
+app.post("/highlights/addStory/:highlightId", async (req, res) => {
+  const { storyId } = req.body;
+
+  const highlight = await Highlight.findById(req.params.highlightId);
+  if (!highlight) return res.status(404).send("Highlight not found");
+
+  highlight.stories.push(storyId);
+  await highlight.save();
+
+  res.json({ message: "Story added to highlight", highlight });
+});
+
+// REMOVE STORY FROM HIGHLIGHT
+app.post("/highlights/removeStory/:highlightId", async (req, res) => {
+  const { storyId } = req.body;
+
+  const highlight = await Highlight.findById(req.params.highlightId);
+  if (!highlight) return res.status(404).send("Highlight not found");
+
+  highlight.stories = highlight.stories.filter(id => id !== storyId);
+  await highlight.save();
+
+  res.json({ message: "Story removed from highlight", highlight });
+});
+
+// DELETE HIGHLIGHT
+app.post("/highlights/delete/:highlightId", async (req, res) => {
+  await Highlight.findByIdAndDelete(req.params.highlightId);
+  res.json({ message: "Highlight deleted" });
+});
