@@ -1,0 +1,45 @@
+// MONETIZATION DASHBOARD SYSTEM (INSTAGRAM-Like)
+
+// MODEL FOR EARNINGS
+const Earning = mongoose.model("Earning", {
+  userId: String,
+  source: String,      // e.g., "Ads", "Reels Bonus", "Shop"
+  amount: Number,
+  currency: { type: String, default: "USD" },
+  createdAt: { type: Date, default: Date.now }
+});
+
+// ADD EARNING
+app.post("/monetization/add", async (req, res) => {
+  const { userId, source, amount, currency } = req.body;
+
+  const earning = new Earning({ userId, source, amount, currency });
+  await earning.save();
+
+  res.json({ message: "Earning recorded", earning });
+});
+
+// GET USER EARNINGS
+app.get("/monetization/user/:userId", async (req, res) => {
+  const earnings = await Earning.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+
+  const totalEarnings = earnings.reduce((acc, e) => acc + e.amount, 0);
+
+  res.json({ totalEarnings, earnings });
+});
+
+// GET PLATFORM EARNINGS
+app.get("/monetization/platform", async (req, res) => {
+  const earnings = await Earning.find();
+  const totalEarnings = earnings.reduce((acc, e) => acc + e.amount, 0);
+
+  res.json({ totalEarnings, totalRecords: earnings.length });
+});
+
+// GET EARNINGS BY SOURCE
+app.get("/monetization/source/:source", async (req, res) => {
+  const earnings = await Earning.find({ source: req.params.source });
+  const total = earnings.reduce((acc, e) => acc + e.amount, 0);
+
+  res.json({ total, earnings });
+});
