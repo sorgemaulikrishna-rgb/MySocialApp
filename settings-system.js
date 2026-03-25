@@ -1,5 +1,8 @@
-// APP SETTINGS SYSTEM (INSTAGRAM-Like User Preferences)
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
 
+// --- APP SETTINGS MODEL ---
 const AppSetting = mongoose.model("AppSetting", {
   userId: String,
   notifications: {
@@ -11,16 +14,18 @@ const AppSetting = mongoose.model("AppSetting", {
   },
   privacy: {
     profileVisible: { type: Boolean, default: true },
-    storyVisibleTo: { type: [String], default: [] }, // userIds
+    storyVisibleTo: { type: [String], default: [] }, 
     allowMentions: { type: Boolean, default: true }
   },
-  theme: { type: String, default: "light" }, // light or dark
+  theme: { type: String, default: "light" }, 
   language: { type: String, default: "en" },
   createdAt: { type: Date, default: Date.now }
 });
 
-// CREATE OR UPDATE USER SETTINGS
-app.post("/settings/update", async (req, res) => {
+// --- ROUTES ---
+
+// 1. CREATE OR UPDATE USER SETTINGS
+router.post("/settings/update", async (req, res) => {
   const { userId, notifications, privacy, theme, language } = req.body;
 
   let settings = await AppSetting.findOne({ userId });
@@ -37,32 +42,16 @@ app.post("/settings/update", async (req, res) => {
   res.json({ message: "Settings updated", settings });
 });
 
-// GET USER SETTINGS
-app.get("/settings/:userId", async (req, res) => {
+// 2. GET USER SETTINGS
+router.get("/settings/:userId", async (req, res) => {
   const settings = await AppSetting.findOne({ userId: req.params.userId });
   if (!settings) return res.status(404).send("Settings not found");
-
   res.json({ settings });
 });
 
-// TOGGLE SPECIFIC NOTIFICATION
-app.post("/settings/toggleNotification", async (req, res) => {
-  const { userId, type, value } = req.body; // type: likes, comments, followers, live, dm
-
-  const settings = await AppSetting.findOne({ userId });
-  if (!settings) return res.status(404).send("Settings not found");
-
-  if (settings.notifications[type] !== undefined) {
-    settings.notifications[type] = value;
-  }
-
-  await settings.save();
-  res.json({ message: "Notification toggled", settings });
-});
-
-// CHANGE THEME
-app.post("/settings/theme", async (req, res) => {
-  const { userId, theme } = req.body; // theme: light/dark
+// 3. CHANGE THEME (Short route)
+router.post("/settings/theme", async (req, res) => {
+  const { userId, theme } = req.body; 
   const settings = await AppSetting.findOne({ userId });
   if (!settings) return res.status(404).send("Settings not found");
 
@@ -70,3 +59,5 @@ app.post("/settings/theme", async (req, res) => {
   await settings.save();
   res.json({ message: "Theme updated", settings });
 });
+
+module.exports = router;
