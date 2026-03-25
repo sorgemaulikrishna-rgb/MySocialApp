@@ -1,0 +1,55 @@
+// DEPLOY READY SERVER (Render / Railway / VPS)
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path");
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// STATIC FILES (uploads folder)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ENV PORT
+const PORT = process.env.PORT || 5000;
+
+// DB CONNECT (USE MONGODB ATLAS URI IN PRODUCTION)
+mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/socialapp")
+.then(()=>console.log("DB Connected"))
+.catch(err=>console.log(err));
+
+// USER MODEL
+const User = mongoose.model("User", {
+  username: String,
+  email: String,
+  password: String,
+  followers: [String],
+  following: [String]
+});
+
+// POST MODEL
+const Post = mongoose.model("Post", {
+  userId: String,
+  image: String,
+  videoUrl: String,
+  caption: String,
+  likes: [String],
+  shares: [String],
+  comments: [
+    {
+      _id: String,
+      userId: String,
+      text: String
+    }
+  ]
+});
+
+// BASIC ROUTE
+app.get("/", (req, res) => {
+  res.send("Server Live 🚀");
+});
+
+// START
+app.listen(PORT, () => console.log("Server running on " + PORT));
