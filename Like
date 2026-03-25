@@ -1,13 +1,16 @@
-// LIKE / UNLIKE (TOGGLE)
-app.post("/like/:postId", async (req, res) => {
-  const { userId } = req.body;
+const express = require('express');
+const router = express.Router(); // यह सही है
+const mongoose = require('mongoose');
 
+// --- LIKE / UNLIKE (TOGGLE) ---
+// ध्यान दें: यहाँ 'app' की जगह 'router' इस्तेमाल करें
+router.post("/like/:postId", async (req, res) => {
+  const { userId } = req.body;
   const post = await Post.findById(req.params.postId);
 
   if (!post) return res.status(404).send("Post not found");
 
   let liked = false;
-
   if (post.likes.includes(userId)) {
     post.likes = post.likes.filter(id => id !== userId);
     liked = false;
@@ -17,7 +20,6 @@ app.post("/like/:postId", async (req, res) => {
   }
 
   await post.save();
-
   res.json({
     message: liked ? "Liked" : "Unliked",
     totalLikes: post.likes.length,
@@ -25,63 +27,19 @@ app.post("/like/:postId", async (req, res) => {
   });
 });
 
-// GET TOTAL LIKES COUNT
-app.get("/likes/count/:postId", async (req, res) => {
+// --- GET TOTAL LIKES ---
+router.get("/likes/count/:postId", async (req, res) => {
   const post = await Post.findById(req.params.postId);
-
-  res.json({
-    totalLikes: post.likes.length
-  });
+  res.json({ totalLikes: post.likes.length });
 });
 
-// GET ALL USERS WHO LIKED
-app.get("/likes/:postId", async (req, res) => {
+// --- CLEAR ALL LIKES (ADMIN) ---
+router.post("/likes/clear/:postId", async (req, res) => {
   const post = await Post.findById(req.params.postId);
-
-  res.json({
-    likes: post.likes
-  });
-});
-
-// CHECK IF USER LIKED
-app.post("/likes/check/:postId", async (req, res) => {
-  const { userId } = req.body;
-
-  const post = await Post.findById(req.params.postId);
-
-  const liked = post.likes.includes(userId);
-
-  res.json({
-    liked: liked
-  });
-});
-
-// REMOVE LIKE BY USER
-app.post("/likes/remove/:postId", async (req, res) => {
-  const { userId } = req.body;
-
-  const post = await Post.findById(req.params.postId);
-
-  post.likes = post.likes.filter(id => id !== userId);
-
-  await post.save();
-
-  res.json({
-    message: "Like Removed",
-    totalLikes: post.likes.length
-  });
-});
-
-// CLEAR ALL LIKES (ADMIN)
-app.post("/likes/clear/:postId", async (req, res) => {
-  const post = await Post.findById(req.params.postId);
-
   post.likes = [];
-
   await post.save();
-
-  res.json({
-    message: "All Likes Cleared",
-    totalLikes: 0
-  });
+  res.json({ message: "All Likes Cleared", totalLikes: 0 });
 });
+
+// फाइल के एकदम आखिर में (जैसा आपने फोटो 1000025145.jpg में दिखाया है)
+module.exports = router; 
