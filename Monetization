@@ -1,64 +1,36 @@
-// MONETIZATION SYSTEM (INSTAGRAM-LIKE)
+const express = require('express');
+const router = express.Router(); // राउटर बनाया
+const mongoose = require('mongoose');
 
-// MODEL FOR EARNINGS
+// --- MODEL ---
 const Earning = mongoose.model("Earning", {
   userId: String,
   postId: String,
-  type: String, // ad, sponsored, tip
+  type: String, 
   amount: Number,
   createdAt: { type: Date, default: Date.now }
 });
 
-// CREATE EARNING ENTRY (e.g., AD REVENUE)
-app.post("/earnings/add", async (req, res) => {
+// --- ROUTES ---
+// ध्यान दें: यहाँ 'app' की जगह 'router' कर दिया गया है
+router.post("/earnings/add", async (req, res) => {
   const { userId, postId, type, amount } = req.body;
-
-  const earning = new Earning({
-    userId,
-    postId,
-    type,
-    amount
-  });
-
+  const earning = new Earning({ userId, postId, type, amount });
   await earning.save();
-
   res.json({ message: "Earning recorded", earning });
 });
 
-// GET USER TOTAL EARNINGS
-app.get("/earnings/user/:userId", async (req, res) => {
+router.get("/earnings/user/:userId", async (req, res) => {
   const earnings = await Earning.find({ userId: req.params.userId });
-
   const total = earnings.reduce((acc, curr) => acc + curr.amount, 0);
-
-  res.json({
-    totalEarnings: total,
-    earnings: earnings
-  });
+  res.json({ totalEarnings: total, earnings: earnings });
 });
 
-// GET POST EARNINGS
-app.get("/earnings/post/:postId", async (req, res) => {
+router.get("/earnings/post/:postId", async (req, res) => {
   const earnings = await Earning.find({ postId: req.params.postId });
-
   const total = earnings.reduce((acc, curr) => acc + curr.amount, 0);
-
-  res.json({
-    totalEarnings: total,
-    earnings: earnings
-  });
+  res.json({ totalEarnings: total, earnings: earnings });
 });
 
-// REALTIME EARNING UPDATE USING SOCKET.IO
-io.on("connection", (socket) => {
-  socket.on("joinEarnings", (userId) => {
-    socket.join("earn_" + userId);
-  });
-
-  socket.on("addEarning", async ({ userId, postId, type, amount }) => {
-    const earning = new Earning({ userId, postId, type, amount });
-    await earning.save();
-
-    io.to("earn_" + userId).emit("earningUpdated", earning);
-  });
-});
+// सबसे जरूरी लाइन!
+module.exports = router; 
