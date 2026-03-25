@@ -1,23 +1,23 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, SafeAreaView, TouchableOpacity, Animated, Dimensions } from 'react-native';
-import { Feather, Ionicons, FontAwesome5 } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
+import React from 'react';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 export default function App() {
-  const [liked, setLiked] = useState(false);
-  const [following, setFollowing] = useState(false);
-  
-  // लाइक एनीमेशन के लिए
-  const lastTap = useRef(null);
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.logo}>SocialStream</Text>
+      </View>
+      <View style={styles.body}>
+        <Text>आपका सोशल मीडिया ऐप तैयार हो रहा है!</Text>
+      </View>
+    </SafeAreaView>
+  );
+}
 
-  // डबल टैप लॉजिक
-  const handleDoubleTap = () => {
-    const now = Date.now();
-    const DOUBLE_PRESS_DELAY = 300;
-    if (lastTap.current && (now - lastTap.current) < DOUBLE_PRESS_DELAY) {
-      setLiked(true);
-      animateHeart();
-    } else {
-      lastTap.current = now;
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { height: 60, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 1, borderColor: '#eee', marginTop: 40 },
+  logo: { fontSize: 24, fontWeight: 'bold', color: '#e91e63' },
+  body: { flex: 1, justifyContent: 'center', alignItems: 'center' }
+});
+         
