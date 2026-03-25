@@ -1,0 +1,40 @@
+// EXPLORE SYSTEM (INSTAGRAM-LIKE CONTENT DISCOVERY)
+
+// GET TRENDING POSTS FOR EXPLORE
+app.get("/explore/posts", async (req, res) => {
+  const posts = await Post.find()
+    .sort({ "likes.length": -1, "comments.length": -1, createdAt: -1 })
+    .limit(50)
+    .lean();
+
+  res.json({ total: posts.length, posts });
+});
+
+// GET TRENDING REELS FOR EXPLORE
+app.get("/explore/reels", async (req, res) => {
+  const reels = await Reel.find()
+    .sort({ "likes.length": -1, "comments.length": -1, createdAt: -1 })
+    .limit(50)
+    .lean();
+
+  res.json({ total: reels.length, reels });
+});
+
+// GET USER SUGGESTIONS (WHO TO FOLLOW)
+app.get("/explore/users", async (req, res) => {
+  const users = await User.find()
+    .sort({ followers: -1 })
+    .limit(20)
+    .lean();
+
+  res.json({ total: users.length, users });
+});
+
+// SEARCH FUNCTIONALITY
+app.get("/explore/search", async (req, res) => {
+  const q = req.query.q || "";
+  const posts = await Post.find({ caption: { $regex: q, $options: "i" } }).limit(20);
+  const users = await User.find({ username: { $regex: q, $options: "i" } }).limit(20);
+
+  res.json({ posts, users });
+});
