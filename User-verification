@@ -1,0 +1,68 @@
+// USER VERIFICATION SYSTEM (INSTAGRAM-Like)
+
+// MODEL FOR VERIFICATION
+const Verification = mongoose.model("Verification", {
+  userId: String,
+  status: { type: String, default: "pending" }, // pending, approved, rejected
+  documents: [String], // URLs to uploaded documents
+  submittedAt: { type: Date, default: Date.now },
+  reviewedAt: Date,
+  reviewerId: String,
+  reason: String // if rejected
+});
+
+// SUBMIT VERIFICATION REQUEST
+app.post("/verification/submit", async (req, res) => {
+  const { userId, documents } = req.body;
+
+  const existing = await Verification.findOne({ userId });
+  if (existing && existing.status === "pending") return res.status(400).send("Verification already pending");
+
+  const verification = new Verification({ userId, documents });
+  await verification.save();
+
+  res.json({ message: "Verification submitted", verification });
+});
+
+// GET VERIFICATION STATUS
+app.get("/verification/status/:userId", async (req, res) => {
+  const verification = await Verification.findOne({ userId: req.params.userId });
+  if (!verification) return res.status(404).send("No verification found");
+
+  res.json({ status: verification.status, documents: verification.documents, reason: verification.reason });
+});
+
+// ADMIN: APPROVE VERIFICATION
+app.post("/verification/approve/:userId", async (req, res) => {
+  const { reviewerId } = req.body;
+  const verification = await Verification.findOne({ userId: req.params.userId });
+  if (!verification) return res.status(404).send("Verification not found");
+
+  verification.status = "approved";
+  verification.reviewedAt = new Date();
+  verification.reviewerId = reviewerId;
+  await verification.save();
+
+  res.json({ message: "User verified", verification });
+});
+
+// ADMIN: REJECT VERIFICATION
+app.post("/verification/reject/:userId", async (req, res) => {
+  const { reviewerId, reason } = req.body;
+  const verification = await Verification.findOne({ userId: req.params.userId });
+  if (!verification) return res.status(404).send("Verification not found");
+
+  verification.status = "rejected";
+  verification.reviewedAt = new Date();
+  verification.reviewerId = reviewerId;
+  verification.reason = reason;
+  await verification.save();
+
+  res.json({ message: "Verification rejected", verification });
+});
+
+// GET ALL PENDING VERIFICATIONS (ADMIN)
+app.get("/verification/pending", async (req, res) => {
+  const pending = await Verification.find({ status: "pending" }).sort({ submittedAt: 1 });
+  res.json({ total: pending.length, pending });
+});
