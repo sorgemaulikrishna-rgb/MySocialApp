@@ -1,0 +1,61 @@
+// SECURITY SETTINGS SYSTEM (INSTAGRAM-Like)
+
+// MODEL FOR SECURITY SETTINGS
+const SecuritySetting = mongoose.model("SecuritySetting", {
+  userId: String,
+  twoFactorAuth: { type: Boolean, default: false },
+  loginAlerts: { type: Boolean, default: true },
+  passwordLastChanged: { type: Date, default: Date.now },
+  trustedDevices: [{ deviceId: String, deviceName: String, lastUsed: Date }],
+  createdAt: { type: Date, default: Date.now }
+});
+
+// UPDATE SECURITY SETTINGS
+app.post("/security/update", async (req, res) => {
+  const { userId, twoFactorAuth, loginAlerts } = req.body;
+
+  let settings = await SecuritySetting.findOne({ userId });
+  if (!settings) {
+    settings = new SecuritySetting({ userId, twoFactorAuth, loginAlerts });
+  } else {
+    if (twoFactorAuth !== undefined) settings.twoFactorAuth = twoFactorAuth;
+    if (loginAlerts !== undefined) settings.loginAlerts = loginAlerts;
+  }
+
+  await settings.save();
+  res.json({ message: "Security settings updated", settings });
+});
+
+// GET SECURITY SETTINGS
+app.get("/security/:userId", async (req, res) => {
+  const settings = await SecuritySetting.findOne({ userId: req.params.userId });
+  if (!settings) return res.status(404).send("Security settings not found");
+
+  res.json({ settings });
+});
+
+// ADD TRUSTED DEVICE
+app.post("/security/device/add", async (req, res) => {
+  const { userId, deviceId, deviceName } = req.body;
+
+  const settings = await SecuritySetting.findOne({ userId });
+  if (!settings) return res.status(404).send("Security settings not found");
+
+  settings.trustedDevices.push({ deviceId, deviceName, lastUsed: new Date() });
+  await settings.save();
+
+  res.json({ message: "Trusted device added", settings });
+});
+
+// REMOVE TRUSTED DEVICE
+app.post("/security/device/remove", async (req, res) => {
+  const { userId, deviceId } = req.body;
+
+  const settings = await SecuritySetting.findOne({ userId });
+  if (!settings) return res.status(404).send("Security settings not found");
+
+  settings.trustedDevices = settings.trustedDevices.filter(d => d.deviceId !== deviceId);
+  await settings.save();
+
+  res.json({ message: "Trusted device removed", settings });
+});
