@@ -1,5 +1,8 @@
-// REELS SYSTEM (INSTAGRAM-LIKE SHORT VIDEOS)
+const express = require('express');
+const router = express.Router(); // Router चालू किया
+const mongoose = require('mongoose');
 
+// --- REEL MODEL ---
 const Reel = mongoose.model("Reel", {
   userId: String,
   videoUrl: String,
@@ -16,30 +19,27 @@ const Reel = mongoose.model("Reel", {
   createdAt: { type: Date, default: Date.now }
 });
 
-// CREATE REEL
-app.post("/reels/create", async (req, res) => {
+// --- ROUTES ---
+
+// 1. CREATE REEL (app की जगह router)
+router.post("/reels/create", async (req, res) => {
   const { userId, videoUrl, caption } = req.body;
-
-  const reel = new Reel({
-    userId,
-    videoUrl,
-    caption
-  });
-
+  const reel = new Reel({ userId, videoUrl, caption });
   await reel.save();
   res.json({ message: "Reel created", reel });
 });
 
-// GET ALL REELS
-app.get("/reels", async (req, res) => {
+// 2. GET ALL REELS
+router.get("/reels", async (req, res) => {
   const reels = await Reel.find().sort({ createdAt: -1 });
   res.json(reels);
 });
 
-// LIKE/UNLIKE REEL
-app.post("/reels/like/:reelId", async (req, res) => {
+// 3. LIKE/UNLIKE REEL
+router.post("/reels/like/:reelId", async (req, res) => {
   const { userId } = req.body;
   const reel = await Reel.findById(req.params.reelId);
+  if (!reel) return res.status(404).send("Reel not found");
 
   if (!reel.likes.includes(userId)) {
     reel.likes.push(userId);
@@ -48,34 +48,23 @@ app.post("/reels/like/:reelId", async (req, res) => {
   }
 
   await reel.save();
-  res.json({ message: "Reel liked/unliked", likes: reel.likes.length });
+  res.json({ message: "Reel liked/unliked", totalLikes: reel.likes.length });
 });
 
-// COMMENT ON REEL
-app.post("/reels/comment/:reelId", async (req, res) => {
+// 4. COMMENT ON REEL
+router.post("/reels/comment/:reelId", async (req, res) => {
   const { userId, text } = req.body;
   const reel = await Reel.findById(req.params.reelId);
 
-  const comment = { _id: new Date().toISOString(), userId, text };
+  const comment = { _id: new mongoose.Types.ObjectId().toString(), userId, text };
   reel.comments.push(comment);
 
   await reel.save();
   res.json({ message: "Comment added", comment });
 });
 
-// SHARE REEL
-app.post("/reels/share/:reelId", async (req, res) => {
-  const { userId } = req.body;
-  const reel = await Reel.findById(req.params.reelId);
-
-  if (!reel.shares.includes(userId)) reel.shares.push(userId);
-
-  await reel.save();
-  res.json({ message: "Reel shared", shares: reel.shares.length });
-});
-
-// GET REEL ANALYTICS
-app.get("/reels/analytics/:reelId", async (req, res) => {
+// 5. GET REEL ANALYTICS
+router.get("/reels/analytics/:reelId", async (req, res) => {
   const reel = await Reel.findById(req.params.reelId);
   res.json({
     likes: reel.likes.length,
@@ -83,3 +72,6 @@ app.get("/reels/analytics/:reelId", async (req, res) => {
     shares: reel.shares.length
   });
 });
+
+// सबसे जरूरी लाइन!
+module.exports = router; 
