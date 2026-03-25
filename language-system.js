@@ -1,14 +1,18 @@
-// LANGUAGE SETTINGS SYSTEM (INSTAGRAM-Like)
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
 
-// MODEL FOR USER LANGUAGE SETTINGS
+// --- LANGUAGE SETTING MODEL ---
 const LanguageSetting = mongoose.model("LanguageSetting", {
   userId: String,
-  language: { type: String, default: "en" }, // e.g., "en", "hi", "es"
+  language: { type: String, default: "en" }, 
   createdAt: { type: Date, default: Date.now }
 });
 
-// SET OR UPDATE LANGUAGE
-app.post("/language/update", async (req, res) => {
+// --- ROUTES ---
+
+// 1. SET OR UPDATE LANGUAGE
+router.post("/language/update", async (req, res) => {
   const { userId, language } = req.body;
 
   let setting = await LanguageSetting.findOne({ userId });
@@ -19,19 +23,22 @@ app.post("/language/update", async (req, res) => {
   }
 
   await setting.save();
-  res.json({ message: "Language updated", setting });
+  res.json({ message: "Language updated successfully", setting });
 });
 
-// GET USER LANGUAGE
-app.get("/language/:userId", async (req, res) => {
+// 2. GET USER LANGUAGE
+router.get("/language/:userId", async (req, res) => {
   const setting = await LanguageSetting.findOne({ userId: req.params.userId });
   if (!setting) return res.status(404).send("Language setting not found");
 
   res.json({ language: setting.language });
 });
 
-// GET SUPPORTED LANGUAGES
-app.get("/language/supported", (req, res) => {
+// 3. GET SUPPORTED LANGUAGES
+router.get("/language/supported", (req, res) => {
   const supported = ["en", "hi", "es", "fr", "de", "zh", "ar", "pt", "ru"];
   res.json({ total: supported.length, supported });
 });
+
+module.exports = router;
+
