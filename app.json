@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MySocialApp",
-    "slug": "socialstream",
+    "name": "VibeTube",
+    "slug": "vibetube-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,16 +22,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.maulisorge.mysocialapp"
+      "package": "com.vibetube.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "owner": "maulisorges-organization",
-    "extra": {
-      "eas": {
-        "projectId": "dcbd24b5-15bb-478c-910d-fb50dd7e0a7d"
-      }
     }
   }
 }
