@@ -12,7 +12,7 @@ const Story = mongoose.model("Story", {
   createdAt: { type: Date, default: Date.now, expires: 86400 }
 });
 
-// --- ROUTES ---
+// --- ROUTES --
 
 // 1. ADD STORY
 router.post("/story", async (req, res) => {
