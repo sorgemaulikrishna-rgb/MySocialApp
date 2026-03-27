@@ -33,8 +33,8 @@ export default function App() {
           <View style={styles.videoInfo}>
             <View style={styles.userIcon} />
             <View>
-              <Text style={styles.videoTitle}>VibeTube: My New Video</Text>
-              <Text style={styles.videoStats}>User • 1.2M views</Text>
+              <Text style={styles.videoTitle}>VibeTube: India's New Super App</Text>
+              <Text style={styles.videoStats}>SuperTeam • 1M views</Text>
             </View>
           </View>
 
@@ -46,10 +46,6 @@ export default function App() {
                 color={isLiked ? "red" : "black"} 
               />
               <Text style={styles.actionText}>{likes}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton}>
-              <Ionicons name="chatbubble-outline" size={24} color="black" />
-              <Text style={styles.actionText}>45</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -77,7 +73,7 @@ const styles = StyleSheet.create({
   videoTitle: { fontSize: 16, fontWeight: '600', width: width - 80 },
   videoStats: { color: 'gray', fontSize: 12 },
   interactionBar: { flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 15 },
-  actionButton: { flexDirection: 'row', alignItems: 'center', marginRight: 25 },
+  actionButton: { flexDirection: 'row', alignItems: 'center' },
   actionText: { marginLeft: 5, fontWeight: 'bold' },
   bottomNav: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 10, borderTopWidth: 0.5, borderColor: '#ccc' },
   uploadBtn: { backgroundColor: 'red', width: 45, height: 45, borderRadius: 22.5, justifyContent: 'center', alignItems: 'center' }
