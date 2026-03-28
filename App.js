@@ -4,14 +4,23 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
-// आपकी मुख्य फाइलों का इम्पोर्ट
-import HomeScreen from './App'; // या आपकी मुख्य फीड फाइल
+// आपकी असली फाइलों के इम्पोर्ट (Paths checked from your file list)
 import StorySystem from './StorySystem';
 import ReelsScreen from './Reels';
 import ProfileScreen from './profile-system';
 import SearchScreen from './search-system';
 import NotificationScreen from './notification-system';
 import MonetizationScreen from './Monetization';
+
+// एक सिंपल होम स्क्रीन अगर आपके पास अलग से Home.js नहीं है
+import { View, Text } from 'react-native';
+function HomeScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Welcome to SocialStream</Text>
+    </View>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -34,16 +43,15 @@ export default function App() {
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
-            // आपकी फाइलों के अनुसार आइकन्स
             if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
             else if (route.name === 'Explore') iconName = 'search';
             else if (route.name === 'Reels') iconName = 'play-circle';
             else if (route.name === 'Notifications') iconName = 'notifications';
-            else if (route.name === 'Earnings') iconName = 'wallet'; // Monetization के लिए
+            else if (route.name === 'Earnings') iconName = 'wallet';
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: '#000',
+          tabBarActiveTintColor: '#FF0000', // YouTube Red Look
           tabBarInactiveTintColor: 'gray',
         })}
       >
@@ -55,5 +63,5 @@ export default function App() {
       </Tab.Navigator>
     </NavigationContainer>
   );
-            }
-        
+  }
+            
