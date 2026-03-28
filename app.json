@@ -2,10 +2,8 @@
   "expo": {
     "name": "VibeTube",
     "slug": "vibetube-app",
-    "owner": "mauli-k-sorge",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": null,
     "userInterfaceStyle": "light",
     "splash": {
       "resizeMode": "contain",
