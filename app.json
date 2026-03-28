@@ -1,25 +1,35 @@
 {
   "expo": {
-    "name": "VibeTube",
-    "slug": "vibetube-app-x-plje-qa29ybckfdu7ye",
-    "owner": "mauli-k-sorge",
+    "name": "VibeTube-App",
+    "slug": "vibetube-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
     "android": {
-      "package": "com.maulikrishna.vibetube",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.sorgemauli.vibetube"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "23078b9e-b281-410f-97d9-ec1844cabe32"
+        "projectId": "d2c3f76c-7171-4170-a414-ff1f19c17686"
       }
     }
   }
