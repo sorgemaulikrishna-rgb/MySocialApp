@@ -1,37 +1,53 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, HorizontalScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-// होम स्क्रीन जहाँ वीडियो लिस्ट दिखेगी
+const { width } = Dimensions.get('window');
+
+// मुख्य फीड स्क्रीन (XML के अनुसार)
 function HomeScreen() {
   return (
-    <ScrollView style={styles.homeContainer}>
-      <View style={styles.videoCard}>
-        <View style={styles.thumbnailPlaceholder}>
-          <Ionicons name="play-circle" size={50} color="white" />
-        </View>
-        <Text style={styles.videoTitle}>Welcome to VibeTube - First Video</Text>
-        <Text style={styles.videoStats}>1.2M views • 2 hours ago</Text>
+    <View style={styles.mainContainer}>
+      {/* 1. Top Bar */}
+      <View style={styles.topBar}>
+        <Text style={styles.logoText}>SocialStream</Text>
+        <Ionicons name="search" size={24} color="black" />
       </View>
-      
-      <View style={styles.videoCard}>
-        <View style={styles.thumbnailPlaceholder}>
-          <Ionicons name="musical-notes" size={50} color="white" />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* 2. Stories Section */}
+        <View style={{ height: 100 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <View key={i} style={styles.storyCircle}>
+                <Ionicons name="person" size={30} color="#ccc" />
+              </View>
+            ))}
+          </ScrollView>
         </View>
-        <Text style={styles.videoTitle}>Latest Trending Music 2026</Text>
-        <Text style={styles.videoStats}>500K views • 5 hours ago</Text>
-      </View>
-    </ScrollView>
+
+        {/* 3. Video Section */}
+        <Text style={styles.sectionTitle}>20/30 min videos</Text>
+        <View style={styles.videoPlaceholder}>
+          <Ionicons name="play-circle" size={80} color="white" />
+        </View>
+
+        {/* अतिरिक्त वीडियो कार्ड (डिजाइन भरने के लिए) */}
+        <View style={styles.videoPlaceholder}>
+          <Ionicons name="play-circle" size={80} color="white" />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
-function SettingsScreen() {
+// बाकी खाली स्क्रीन्स
+function PlaceholderScreen({ name }) {
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Settings</Text>
-      <Text style={{ marginTop: 10 }}>App Version: 1.0.0</Text>
+    <View style={styles.center}>
+      <Text>{name} Screen</Text>
     </View>
   );
 }
@@ -43,39 +59,39 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          // यह हिस्सा नीचे के आइकन्स को ठीक करेगा
-          tabBarIcon: ({ focused, color, size }) => {
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => {
             let iconName;
-            if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Settings') {
-              iconName = focused ? 'settings' : 'settings-outline';
-            }
+            if (route.name === 'Feed') iconName = 'apps';
+            else if (route.name === 'Reels') iconName = 'play-outline';
+            else if (route.name === 'Upload') iconName = 'add-circle-outline';
+            else if (route.name === 'Search') iconName = 'search';
+            else if (route.name === 'Profile') iconName = 'person-circle-outline';
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: '#FF0000', // YouTube वाला लाल रंग
+          tabBarActiveTintColor: '#000',
           tabBarInactiveTintColor: 'gray',
+          tabBarStyle: { height: 60, backgroundColor: '#EEEEEE' } // XML background
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Feed" component={HomeScreen} />
+        <Tab.Screen name="Reels" component={PlaceholderScreen} />
+        <Tab.Screen name="Upload" component={PlaceholderScreen} />
+        <Tab.Screen name="Search" component={PlaceholderScreen} />
+        <Tab.Screen name="Profile" component={PlaceholderScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  homeContainer: { flex: 1, backgroundColor: '#f0f0f0' },
-  videoCard: { backgroundColor: '#fff', marginBottom: 10, paddingBottom: 10 },
-  thumbnailPlaceholder: { 
-    width: '100%', 
-    height: 200, 
-    backgroundColor: '#333', 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  videoTitle: { fontSize: 16, fontWeight: 'bold', padding: 10, color: '#000' },
-  videoStats: { fontSize: 12, color: 'gray', paddingHorizontal: 10 }
+  mainContainer: { flex: 1, backgroundColor: '#fff', paddingTop: 40 },
+  topBar: { flexDirection: 'row', height: 50, paddingHorizontal: 15, alignItems: 'center', justifyContent: 'space-between' },
+  logoText: { fontSize: 20, fontWeight: 'bold' },
+  storiesContainer: { paddingLeft: 10 },
+  storyCircle: { width: 65, height: 65, borderRadius: 32.5, backgroundColor: '#f0f0f0', borderWidth: 2, borderColor: '#ccc', margin: 8, justifyContent: 'center', alignItems: 'center' },
+  sectionTitle: { fontSize: 16, fontWeight: '600', padding: 15 },
+  videoPlaceholder: { width: width - 20, height: 200, backgroundColor: '#CCCCCC', alignSelf: 'center', borderRadius: 10, marginBottom: 20, justifyContent: 'center', alignItems: 'center' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' }
 });
-    
+              
