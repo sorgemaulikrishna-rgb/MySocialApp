@@ -13,7 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "assets/*.png",
+      "assets/*.jpg",
+      "assets/*.jpeg"
     ],
     "android": {
       "adaptiveIcon": {
@@ -24,7 +26,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "d2c3f76c-7171-4170-a414-ff1f19c17686"
+        "projectId": "d2c3f76c-7171-4170-a414-..."
       }
     }
   }
