@@ -3,10 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-// आपकी बनाई हुई Screens को यहाँ Import करें
-import HomeScreen from './HomeScreen'; // जो होम पेज का डिजाइन हमने बनाया
+// पक्का करें कि ये फाइलें आपके फोल्डर में इसी नाम से हैं
+import HomeScreen from './HomeScreen'; 
 import SearchScreen from './search-system'; 
-import NotificationScreen from './notification-system';
 import ProfileScreen from './profile-system';
 import MonetizationScreen from './Monetization';
 
@@ -21,7 +20,6 @@ export default function App() {
             let iconName;
             if (route.name === 'Home') iconName = 'home-outline';
             else if (route.name === 'Search') iconName = 'search-outline';
-            else if (route.name === 'Add') iconName = 'add-circle';
             else if (route.name === 'Earn') iconName = 'cash-outline';
             else if (route.name === 'Profile') iconName = 'person-outline';
 
@@ -29,7 +27,7 @@ export default function App() {
           },
           tabBarActiveTintColor: '#FF0000',
           tabBarInactiveTintColor: 'gray',
-          headerShown: false, // टॉप बार छिपाने के लिए
+          headerShown: false,
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
