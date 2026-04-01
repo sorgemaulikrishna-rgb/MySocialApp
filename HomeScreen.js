@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, FlatList } from "react-native";
+import React, { useState, useEffect } from "react"; // 'i' को छोटा कर दिया गया है
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
-import { db, auth } from "./firebase-config"; // अपनी फाइल का पाथ चेक कर लें
+import { db, auth } from "./firebase-config"; 
 
 export default function HomeScreen() {
   const [userStory, setUserStory] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  // 1. रीयल-टाइम पोस्ट्स मंगाना (No Refresh Needed)
+  // 1. रीयल-टाइम पोस्ट्स मंगाना
   useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
     
@@ -24,7 +24,7 @@ export default function HomeScreen() {
     return () => unsubscribe();
   }, []);
 
-  // 2. पोस्ट रिपोर्ट करने का फंक्शन (Safety Feature)
+  // 2. पोस्ट रिपोर्ट करने का फंक्शन
   const handleReport = (postId) => {
     Alert.alert(
       "Report Post",
@@ -34,19 +34,23 @@ export default function HomeScreen() {
         { 
           text: "Report", 
           onPress: async () => {
-            await addDoc(collection(db, "reports"), {
-              postId: postId,
-              reportedBy: auth.currentUser?.uid || "anonymous",
-              timestamp: serverTimestamp()
-            });
-            Alert.alert("Success", "रिपोर्ट दर्ज कर ली गई है।");
+            try {
+              await addDoc(collection(db, "reports"), {
+                postId: postId,
+                reportedBy: auth.currentUser?.uid || "anonymous",
+                timestamp: serverTimestamp()
+              });
+              Alert.alert("Success", "रिपोर्ट दर्ज कर ली गई है।");
+            } catch (error) {
+              Alert.alert("Error", "रिपोर्ट सबमिट नहीं हो पाई।");
+            }
           } 
         }
       ]
     );
   };
 
-  // फोटो चुनने का फंक्शन (Story के लिए)
+  // फोटो चुनने का फंक्शन
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -58,12 +62,11 @@ export default function HomeScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.5, // साइज कम रखने के लिए quality कम की है
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       setUserStory(result.assets[0].uri);
-      // यहाँ आप इस इमेज को Firebase Storage में अपलोड करने का कोड भी डाल सकते हैं
     }
   };
 
@@ -123,16 +126,13 @@ const styles = StyleSheet.create({
   addIcon: { width: 66, height: 66, borderRadius: 33, backgroundColor: "#E91E63", justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "#fff" },
   storyImage: { width: 66, height: 66, borderRadius: 33, borderWidth: 2, borderColor: "#E91E63" },
   storyLabel: { marginTop: 5, fontSize: 11, color: "#333" },
-  
-  // फीड स्टाइल्स
   postCard: { marginBottom: 20, backgroundColor: '#fff' },
   postHeader: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, alignItems: 'center' },
   postUser: { fontWeight: 'bold', fontSize: 15 },
   postImage: { width: '100%', height: 350 },
   postFooter: { flexDirection: 'row', padding: 10 },
   caption: { paddingHorizontal: 10, paddingBottom: 10, color: '#333' },
-  
   feedBox: { height: 300, justifyContent: "center", alignItems: "center" },
   feedText: { marginTop: 10, color: "#999", fontSize: 16 }
 });
-    
+  
