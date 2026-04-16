@@ -1,9 +1,9 @@
 {
   "expo": {
     "name": "VibeTube-App",
-    "slug": "vibetube-app",
+    "slug": "vibetube-app-x-plje-qa29ybckfdu7ye",
     "version": "1.0.0",
-    "owner": "sorgemauli-new",
+    "owner": "mauli-k-sorge",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,7 +31,6 @@
       }
     },
     "sdkVersion": "50.0.0",
-    "plugins": [] 
+    "plugins": []
   }
 }
-
